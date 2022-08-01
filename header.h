@@ -10,8 +10,6 @@
 #define B_WIDTH 7
 #define B_WIDE 7
 
-/* made by Nico Herlim*/
-
 typedef char string[50];
 
 typedef struct Player{
