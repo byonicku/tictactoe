@@ -11,8 +11,9 @@ void init(Player P[], Map *M){
 
 	for(i=0;i<B_WIDE;i++){
 		for(j=0;j<B_WIDTH;j++){
-			if(i==0 || i == 2 || i==4||  i==B_WIDE-1) M->map[i][j] = '-';
-			else if(j==0 || j==2 || j==4 || j==B_WIDTH-1) M->map[i][j] = '|';
+			if(i == 2 || i == 4) M->map[i][j] = '-';
+			else if(j == 2 || j == 4) M->map[i][j] = '|';
+			else if(i == 0 || j == 0 || j == B_WIDTH-1 || i == B_WIDE-1) M->map[i][j] = ' ';
 			else M->map[i][j] = k++;
 		}
 	}
@@ -39,7 +40,7 @@ void showBoard(Map M){
 	for(i=0;i<B_WIDE;i++){
 		printf("\t");
 		for(j=0;j<B_WIDTH;j++){
-			printf("%c", M.map[i][j]);
+			printf("%c ", M.map[i][j]);
 		}
 		printf("\n");
 	}
@@ -169,12 +170,13 @@ int checkWin(Map M){
 }
 
 void showWin(Player P[], Map M){
-	showBoard(M);
-	
 	if(checkWin(M) == 1){
-		printf("%s", !P[0].turn ? "\nPlayer 1 Win" : "\nPlayer 2 Win");
+		printf("\n\t %s\n\n", !P[0].turn ? "Player 1 Win" : "Player 2 Win");
 	}
 	else if(checkWin(M) == 2){
 		printf("\nDraw!");
 	}
+	
+	showBoard(M);
+	printf("\n\n\tPress any button to back...");
 }
