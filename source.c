@@ -47,51 +47,66 @@ void board(Map M){
 
 void move(Player P[], Map *M, int *pick, int *check){
 	int i;
-
-	printf("Select your box : "); scanf("%d", &(*pick));
-	for(i=0;i<2;i++){
-		if(P[i].turn == true){
+	string buffer;
+	
+	while(1){
+		printf("Select your box : "); fflush(stdin); gets(buffer);
+		(*pick) = atoi(buffer);
+		
+		if((*pick)<1 || (*pick)>9){
+			printf("\n\tInput must be in range of 1 - 9");
+			getch();
 			break;
 		}
+		
+		if(strlen(buffer) > 1) continue;
+		
+		for(i=0;i<2;i++){
+			if(P[i].turn == true){
+				break;
+			}
+		}
+	
+		if(checkFill(*M, *pick)==1){
+			printf("\n\tBox already filled");
+			getch();
+		}
+		else{
+				if((*pick)==1){
+					M->map[1][1] = P[i].put;
+				}	
+				else if((*pick)==2){
+					M->map[1][3] = P[i].put;
+				}
+				else if((*pick)==3){
+					M->map[1][5] = P[i].put;
+				}
+				else if((*pick)==4){
+					M->map[3][1] = P[i].put;
+				}
+				else if((*pick)==5){
+					M->map[3][3] = P[i].put;
+				}
+				else if((*pick)==6){
+					M->map[3][5] = P[i].put;
+				}
+				else if((*pick)==7){
+					M->map[5][1] = P[i].put;
+				}
+				else if((*pick)==8){
+					M->map[5][3] = P[i].put;
+				}
+				else if((*pick)==9){
+					M->map[5][5] = P[i].put;	
+				}
+				if((*pick)>=1 && (*pick)<=9){
+					changeTurn(P, check);
+					(*check)++;
+				}	
+		}
+		break;
 	}
-
-	if(checkFill(*M, *pick)==1){
-		printf("\n\tBox already filled");
-		getch();
-	}
-	else{
-			if((*pick)==1){
-				M->map[1][1] = P[i].put;
-			}	
-			else if((*pick)==2){
-				M->map[1][3] = P[i].put;
-			}
-			else if((*pick)==3){
-				M->map[1][5] = P[i].put;
-			}
-			else if((*pick)==4){
-				M->map[3][1] = P[i].put;
-			}
-			else if((*pick)==5){
-				M->map[3][3] = P[i].put;
-			}
-			else if((*pick)==6){
-				M->map[3][5] = P[i].put;
-			}
-			else if((*pick)==7){
-				M->map[5][1] = P[i].put;
-			}
-			else if((*pick)==8){
-				M->map[5][3] = P[i].put;
-			}
-			else if((*pick)==9){
-				M->map[5][5] = P[i].put;	
-			}
-			if((*pick)>=1 && (*pick)<=9){
-				changeTurn(P, check);
-				(*check)++;
-			}
-	}
+	
 }
 
 void changeTurn(Player P[], int *check){
