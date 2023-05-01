@@ -3,47 +3,44 @@
 int main() {
 	Player P[2];
 	Map M;
-	int menuSelect, check = 0;
-
+	int menuSelect = 0;
+	string buffer;
+	
 	do{
-		menu(&menuSelect);
+		showMenu();
+
+		printf("\n >>> "); fgets(buffer, MAX_STRING, stdin);
+		menuSelect = atoi(buffer);
+		
 		switch(menuSelect){
 			case 1 :
 				init(P, &M);
-				check = 0;
 				
 				do{
 					system("cls");
-					
-					if(check%2==0) printf("Player 1\n");
-					else printf("Player 2\n");
-					board(M);
-					
-					if(checkWin(M) == 1){
-						if(check%2!=0) printf("\nPlayer 1 Win");
-						else printf("\nPlayer 2 Win");
-						
+					if(checkWin(M) != -1) {
+						showWin(P, M);
 						break;
 					}
-					else if(checkWin(M) == 2){
-						printf("\nDraw!");
-						
-						break;
-					}
-						
-					move(P, &M, &check);	
-				}while(true);
+					
+					printf("%s\n\n", P[0].turn ? " Player 1" : " Player 2");
+					
+					showBoard(M);
+
+					move(P, &M);
+				} while(true);
 				break;
 			case 2:
-				howTo();
+				showHowTo();
 				break;
-			case 0:
+			case 3:
 				printf("\n\t [!] Thanks for playing!");
 				break;
 			default:
 				printf("\n\t [!] Menu not found!");
 		} getch();
-	}while(menuSelect!=0);
+		
+	}while(menuSelect != 3);
 	
 	return 0;
 }
