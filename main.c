@@ -3,7 +3,7 @@
 int main() {
 	Player P[2];
 	Map M;
-	int menuSelect, check = 0, pick;
+	int menuSelect, check = 0;
 
 	do{
 		menu(&menuSelect);
@@ -11,6 +11,7 @@ int main() {
 			case 1 :
 				init(P, &M);
 				check = 0;
+				
 				do{
 					system("cls");
 					
@@ -30,7 +31,7 @@ int main() {
 						break;
 					}
 						
-					move(P, &M, &pick, &check);	
+					move(P, &M, &check);	
 				}while(true);
 				break;
 			case 2:
