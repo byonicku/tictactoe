@@ -6,6 +6,7 @@
 #include <string.h>
 #include <conio.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #define B_WIDTH 7
 #define B_WIDE 7
