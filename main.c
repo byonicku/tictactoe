@@ -18,12 +18,13 @@ int main() {
 				
 				do{
 					system("cls");
+					
 					if(checkWin(M) != -1) {
 						showWin(P, M);
 						break;
 					}
 					
-					printf("%s\n\n", P[0].turn ? " Player 1" : " Player 2");
+					printf("\n\t %s\n\n", P[0].turn ? " Player 1 <X>" : " Player 2 <O>");
 					
 					showBoard(M);
 
