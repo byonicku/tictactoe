@@ -134,13 +134,70 @@ int checkFill(Map M, int i, int j){
 
 int checkDraw(Map M, int width, int wide) {
     int i, j;
+	int haveX = 0;
+	int haveO = 0;
+	int checkBaris = 0;
+	int checkKolom = 0;
+	int checkDiagonalKiri = 0;
+	int checkDiagonalKanan = 0;
 
-    for (i = 0; i < width; i++) 
-        for (j = 0; j < wide; j++) 
-            if (M.map[i][j] == '-')
-                return 0;
+    //Cek per baris
+    for(i = 0; i < width; i++){
+		haveX = 0;
+		haveO = 0;
 
-    return 1;
+		for(j = 0; j < wide; j++){
+			if(M.map[i][j] == 'X')	
+				haveX++;
+			else if(M.map[i][j] == 'O')
+				haveO++;
+		}
+
+		checkBaris += haveX > 0 && haveO > 0 ? 1 : 0; //max 9
+	}
+
+    // Cek per kolom
+    for(j = 0; j < wide ; j++){
+		haveX = 0;
+		haveO = 0;
+		
+        for(i = 0; i < width; i++){
+			if(M.map[i][j] == 'X')	
+				haveX++;
+			else if(M.map[i][j] == 'O')
+				haveO++;
+		}
+
+		checkKolom += haveX > 0 && haveO > 0 ? 1 : 0; // max 9 
+    }
+
+    // Cek diagonal ke kanan bawah
+    for(j = 0; j < wide; j++){
+		if(M.map[j][j] == 'X')	
+			haveX++;
+		else if(M.map[j][j] == 'O')
+			haveO++;
+	}
+    
+	checkDiagonalKanan += haveX > 0 && haveO > 0 ? 1 : 0; // max 1
+
+    // Cek diagonal ke kanan atas    
+	for(j = 0; j < wide; j++){
+ 		if (M.map[j][wide-1-j] == 'X')
+			haveX++;
+		else if(M.map[j][wide-1-j] == 'O')
+			haveO++;
+	}
+       
+	checkDiagonalKiri += haveX > 0 && haveO > 0 ? 1 : 0; // max 1
+                 
+	if(checkBaris == width 
+		&& checkKolom == wide 
+			&& checkDiagonalKanan == 1 
+				&& checkDiagonalKiri == 1)
+		return 1;
+	else
+    	return 0;
 }
 
 int checkWin(Map M, int width, int wide){
@@ -174,12 +231,12 @@ int checkWin(Map M, int width, int wide){
     // Cek diagonal ke kanan bawah
     count = 0;
 
-    for(j = 0; j < wide; ++j)
+    for(j = 0; j < wide; j++)
         count += (M.map[j][j] == 'X')?  1 :
                  (M.map[j][j] == 'O')? -1 : 0;
     
     if (count == wide || count == -(wide)) 
-		return count / abs(count); // Return either 1 or -1
+		return count / abs(count); 
 
     // Cek diagonal ke kanan atas
     count = 0;
@@ -190,7 +247,7 @@ int checkWin(Map M, int width, int wide){
     
 
     if (count == wide || count == -(wide)) 
-		return count / abs(count); // Return either 1 or -1
+		return count / abs(count); 
 
     return 0;
 }
@@ -202,8 +259,7 @@ void showWinOrDraw(Player P[], Map M, int width, int wide){
 	if(win == 1 || win == -1)
 		printf("\n\t %s\n\n", !P[0].turn ? 
 			"Player 1 Win" : "Player 2 Win");
-	
-	if(draw)
+	else if(draw)
 		printf("\n\t Draw!\n\n");
 	
 	showBoard(M, width, wide);

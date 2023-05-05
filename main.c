@@ -53,15 +53,12 @@ int main() {
 				printf("\t Input wide 	: "); fgets(buffer, MAX_STRING, stdin);
 				newWide = atoi(buffer);
 				
-				if(newWidth < 3 || newWide < 3){
+				if(newWidth < 3 || newWide < 3)
 					printf("\n\t Board size cannot be under 3 x 3 !");
-				}
-				else if(newWidth > 9 || newWide > 9){
+				else if(newWidth > 9 || newWide > 9)
 					printf("\n\t Board size cannot be over 9 x 9 !");
-				}
-				else if(newWidth != newWide){
+				else if(newWidth != newWide)
 					printf("\n\t Board width and wide size must be same !");
-				}
 				else{
 					width = newWidth;
 					wide = newWide;
