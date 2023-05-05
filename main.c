@@ -6,6 +6,7 @@ int main() {
 		
 	int menuSelect = 0;
 	int width = DEFAULT_WIDTH, wide = DEFAULT_WIDE;
+	int newWidth = 0, newWide = 0;
 	string buffer;
 	
 	do{
@@ -17,7 +18,7 @@ int main() {
 		switch(menuSelect){
 			case 1 :
 				init(P, &M, width, wide);
-
+				
 				do{
 					system("cls");
 					
@@ -39,14 +40,41 @@ int main() {
 				showHowTo();
 				break;
 			case 3:
+				printf("\n\t ==== Update Board Size ====");
+				
+				printf("\n\t Input width	: "); fgets(buffer, MAX_STRING, stdin);
+				newWidth = atoi(buffer);
+				
+				printf("\t Input wide 	: "); fgets(buffer, MAX_STRING, stdin);
+				newWide = atoi(buffer);
+				
+				if(newWidth < 3 || newWide < 3){
+					printf("\n\t Board size cannot be under 3 x 3 !");
+					break;
+				}
+				else if(newWidth > 9 || newWide > 9){
+					printf("\n\t Board size cannot be over 9 x 9 !");
+					break;
+				}
+				else if(newWidth != newWide){
+					printf("\n\t Board width and wide size must be same !");
+					break;
+				}
+				else{
+					width = newWidth;
+					wide = newWide;
+				}
+				
+				printf("\n\t Successfully update board size!");
+				break;
+			case 4:
 				printf("\n\t [!] Thanks for playing!");
-				freePointer(&M, width, wide);
 				break;
 			default:
 				printf("\n\t [!] Menu not found!");
 		} getch();
 		
-	}while(menuSelect != 3);
+	}while(menuSelect != 4);
 	
 	return 0;
 }

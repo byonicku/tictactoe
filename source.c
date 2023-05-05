@@ -9,7 +9,6 @@ void init(Player P[], Map *M, int width, int wide){
 	for(i = 0 ; i < wide ; i++)
 		M->map[i] = malloc(sizeof(char) * wide);
 	
-	
 	//random start
 	P[0].turn = rand() % 2 ? true : false;
 	P[1].turn = !P[0].turn;
@@ -27,7 +26,7 @@ void freePointer(Map *M, int width, int wide){
 	
 	for(i = 0 ; i < wide ; i++)
 		free(M->map[i]);
-	
+		
 	free(M->map);
 }
 
@@ -52,7 +51,8 @@ void showMenu(){
 	printf(" ---- Tic Tac Toe ----\n");
 	printf("\n [1] Play");
 	printf("\n [2] How To Play");
-	printf("\n [3] Exit \n");
+	printf("\n [3] Change Board Size");
+	printf("\n [4] Exit \n");
 }
 
 void showHowTo(){
@@ -70,11 +70,22 @@ void showBoard(Map M, int width, int wide){
 	for(i = 0 ; i < width ; i++){
 		printf("\t");
 		for(j = 0 ; j < wide ; j++){
-			if(M.map[i][j] == '-') printf("%d ", k);
+			if(M.map[i][j] == '-') printf("%02d", k);
+			else if(j == wide - 1) printf("%c ", M.map[i][j]);
+			else if(j == 0) printf(" %c", M.map[i][j]);
 			else printf("%c ", M.map[i][j]);
 			
+			if(j != wide-1) printf(" | ");
 			k++;
 		}
+		printf("\n\t");
+		
+		if(j == wide && i == width-1) continue;
+		
+		for(j = 0 ; j < 2 + (width-1)*5; j++){ // dibantu jeanny https://github.com/Leviynn
+			printf("-");
+		}
+		
 		printf("\n");
 	}
 }
@@ -110,6 +121,8 @@ void move(Player P[], Map *M, int width, int wide){
 		free(temp);
 		
 		M->map[i][j] = P[getTurn(P)].put;
+//		printf("i : %d, j : %d, input : %d\n map %c put %c", i, j, pick, M->map[i][j], P[getTurn(P)].put); debug
+//		getch();
 		
 		changeTurn(P);
 		
@@ -227,7 +240,7 @@ int* getLocation(Map M, int width, int wide, int pick){
 			if(pick == k) break; 
 			k++;
 		}	
-		if(pick == k && j == 3) continue;
+		if(pick == k && j == wide) continue;
 		
 		if(pick == k) break;
 	}
