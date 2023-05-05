@@ -1,22 +1,33 @@
 #include "header.h"
 
-void init(Player P[], Map *M){
+void init(Player P[], Map *M, int width, int wide){
 	int i, j;
-	char k = '1';
+	srand(time(NULL));
 	
-	P[0].turn = true;
+	M->map = malloc(sizeof(char*) * width);
+	
+	for(i = 0 ; i < wide ; i++)
+		M->map[i] = malloc(sizeof(char) * wide);
+	
+	//random pick player
+	P[0].turn = rand() % 2 ? true : false;
+	P[1].turn = !P[0].turn;
+	
 	P[0].put = 'X';
-	P[1].turn = false;
 	P[1].put = 'O';
 
-	for(i=0;i<B_WIDE;i++){
-		for(j=0;j<B_WIDTH;j++){
-			if(i == 2 || i == 4) M->map[i][j] = '-';
-			else if(j == 2 || j == 4) M->map[i][j] = '|';
-			else if(i == 0 || j == 0 || j == B_WIDTH-1 || i == B_WIDE-1) M->map[i][j] = ' ';
-			else M->map[i][j] = k++;
-		}
-	}
+	for(i = 0; i < width ; i++)
+		for(j = 0 ; j < wide ; j++)
+			M->map[i][j] = '-';	
+}
+
+void freePointer(Map *M, int width, int wide){
+	int i;
+	
+	for(i = 0 ; i < wide ; i++)
+		free(M->map[i]);
+		
+	free(M->map);
 }
 
 void showMenu(){
@@ -24,61 +35,81 @@ void showMenu(){
 	printf(" ---- Tic Tac Toe ----\n");
 	printf("\n [1] Play");
 	printf("\n [2] How To Play");
-	printf("\n [3] Exit \n");
+	printf("\n [3] Change Board Size");
+	printf("\n [4] Exit \n");
 }
 
 void showHowTo(){
 	system("cls");
-	printf("\n There will be 9 box you just need to write it in console");
+	printf("\n There will be box you just need to write it coordinate in console");
 	printf("\n Choose your box and line up the 'X' or 'O' symbol to win");
 	printf("\n Line can be diagonal or straight.");
+	printf("\n\n You can modify your tic tac toe board\n to be minimum of 3x3 and maximum of 9x9");
 	printf("\n\n\t\tPress any button to back...");
 }
 
-void showBoard(Map M){
+void showBoard(Map M, int width, int wide){
 	int i, j;
-	for(i=0;i<B_WIDE;i++){
+	int k = 1;
+	
+	for(i = 0 ; i < width ; i++){
 		printf("\t");
-		for(j=0;j<B_WIDTH;j++){
-			printf("%c ", M.map[i][j]);
+		for(j = 0 ; j < wide ; j++){
+			if(M.map[i][j] == '-') printf("%02d", k);
+			else if(j == wide - 1) printf("%c ", M.map[i][j]);
+			else if(j == 0) printf(" %c", M.map[i][j]);
+			else printf("%c ", M.map[i][j]);
+			
+			if(j != wide-1) 
+				printf(" | ");
+			k++;
 		}
+		
+		printf("\n\t");
+		
+		if(j == wide && i == width-1) 
+			continue;
+		
+		for(j = 0 ; j < 2 + (width - 1) * 5; j++) 
+		// Helped by https://github.com/Leviynn
+			printf("-");
+		
+		
 		printf("\n");
 	}
 }
 
-void move(Player P[], Map *M){
-	int i, pick;
+void move(Player P[], Map *M, int width, int wide){
+	int i, j, k = 1, pick;
 	string buffer;
 	
 	while(1){
 		printf("\n Select your box : "); fgets(buffer, MAX_STRING, stdin);
 		pick = atoi(buffer);
 		
-		if(pick<1 || pick>9){
-			printf("\n\tInput must be in range of 1 - 9");
+		if(pick<1 || pick>width*wide){
+			printf("\n\tInput must be in range of 1 - %d", width * wide);
 			getch();
 			
 			break;
 		}
-
-		if(checkFill(*M, pick)==1){
+		
+		int* coords = getLocation(*M, width, wide, pick);
+		i = coords[0];
+		j = coords[1];
+		
+		if(checkFill(*M, i, j)){
 			printf("\n\tBox already filled");
 			getch();
 			
 			break;
 		}
+	
+		free(coords);
 		
-		i = getTurn(P);
-		
-		if(pick==1) M->map[1][1] = P[i].put;
-		else if(pick==2) M->map[1][3] = P[i].put;
-		else if(pick==3) M->map[1][5] = P[i].put;
-		else if(pick==4) M->map[3][1] = P[i].put;
-		else if(pick==5) M->map[3][3] = P[i].put;
-		else if(pick==6) M->map[3][5] = P[i].put;
-		else if(pick==7) M->map[5][1] = P[i].put;
-		else if(pick==8) M->map[5][3] = P[i].put;
-		else if(pick==9) M->map[5][5] = P[i].put;	
+		M->map[i][j] = P[getTurn(P)].put;
+//		printf("i : %d, j : %d, input : %d\n map %c put %c", i, j, pick, M->map[i][j], P[getTurn(P)].put); debug
+//		getch();
 		
 		changeTurn(P);
 		
@@ -96,87 +127,109 @@ int getTurn(Player P[]){
 	return !P[0].turn; // Return current player index
 }
 
-int checkFill(Map M, int pick){
-	if(pick==1){
-		if(M.map[1][1] == 'X' || M.map[1][1] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==2){
-		if(M.map[1][3] == 'X' || M.map[1][3] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==3){
-		if(M.map[1][5] == 'X' || M.map[1][5] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==4){
-		if(M.map[3][1] == 'X' || M.map[3][1] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==5){
-		if(M.map[3][3] == 'X' || M.map[3][3] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==6){
-		if(M.map[3][5] == 'X' || M.map[3][5] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==7){
-		if(M.map[5][1] == 'X' || M.map[5][1] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==8){
-		if(M.map[5][3] == 'X' || M.map[5][3] == 'O') return 1;
-		else return -1;
-	}
-	else if(pick==9){
-		if(M.map[5][5] == 'X' || M.map[5][5] == 'O') return 1;
-		else return -1;
-	}
-	else {
-		return -1;
-	}
+int checkFill(Map M, int i, int j){
+	return (M.map[i][j] == 'X') ?  1 :
+           (M.map[i][j] == 'O') ?  1 : 0;
 }
 
-int checkWin(Map M){
-	if((M.map[1][1] == 'X' && M.map[1][3] == 'X' && M.map[1][5] == 'X') || (M.map[1][1] == 'O' && M.map[1][3] == 'O' && M.map[1][5] == 'O')){
-		return 1;
-	}
-	else if((M.map[3][1] == 'X' && M.map[3][3] == 'X' && M.map[3][5] == 'X') || (M.map[3][1] == 'O' && M.map[3][3] == 'O' && M.map[3][5] == 'O')){
-		return 1;
-	}
-	else if((M.map[5][1] == 'X' && M.map[5][3] == 'X' && M.map[5][5] == 'X') || (M.map[5][1] == 'O' && M.map[5][3] == 'O' && M.map[5][5] == 'O')){
-		return 1;
-	}
-	else if((M.map[1][1] == 'X' && M.map[3][1] == 'X' && M.map[5][1] == 'X') || (M.map[1][1] == 'O' && M.map[3][1] == 'O' && M.map[5][1] == 'O')){
-		return 1;
-	}
-	else if((M.map[1][3] == 'X' && M.map[3][3] == 'X' && M.map[5][3] == 'X') || (M.map[1][3] == 'O' && M.map[3][3] == 'O' && M.map[5][3] == 'O')){
-		return 1;
-	}
-	else if((M.map[1][5] == 'X' && M.map[3][5] == 'X' && M.map[5][5] == 'X') || (M.map[1][5] == 'O' && M.map[3][5] == 'O' && M.map[5][5] == 'O')){
-		return 1;
-	}
-	else if((M.map[1][1] == 'X' && M.map[3][3] == 'X' && M.map[5][5] == 'X') || (M.map[1][1] == 'O' && M.map[3][3] == 'O' && M.map[5][5] == 'O')){
-		return 1;
-	}
-	else if((M.map[1][5] == 'X' && M.map[3][3] == 'X' && M.map[5][1] == 'X') || (M.map[1][5] == 'O' && M.map[3][3] == 'O' && M.map[5][1] == 'O')){
-		return 1;
-	}
-	else if(M.map[1][1] != '1' && M.map[1][3] != '2' && M.map[1][5] != '3' && M.map[3][1] != '4' && M.map[3][3] != '5' && M.map[3][5] != '6' && M.map[5][1] != '7' && M.map[5][3] != '8' && M.map[5][5] != '9'){
-		return 2;
-	}
-	else return -1;
+int checkDraw(Map M, int width, int wide) {
+    int i, j;
+
+    for (i = 0; i < width; i++) 
+        for (j = 0; j < wide; j++) 
+            if (M.map[i][j] == '-')
+                return 0;
+
+    return 1;
 }
 
-void showWin(Player P[], Map M){
-	if(checkWin(M) == 1){
-		printf("\n\t %s\n\n", !P[0].turn ? "Player 1 Win" : "Player 2 Win");
-	}
-	else if(checkWin(M) == 2){
-		printf("\nDraw!");
+int checkWin(Map M, int width, int wide){
+	int count = 0;
+    int i, j;
+
+	//Cek per baris
+    for(i = 0; i < width; i++){
+        count = 0;
+        
+		for(j = 0; j < wide; j++)
+            count += (M.map[i][j] == 'X')?  1 :
+                     (M.map[i][j] == 'O')? -1 : 0;
+
+        if (count == width || count == -(width)) 
+			return count / abs(count);
+    }
+
+    // Cek per kolom
+    for(j = 0; j < wide ; j++){
+        count = 0;
+        
+        for(i = 0; i < width; i++)
+            count += (M.map[i][j] == 'X')?  1 :
+                     (M.map[i][j] == 'O')? -1 : 0;
+        
+		if (count == wide || count == -(wide))
+			return count / abs(count);
+    }
+
+    // Cek diagonal ke kanan bawah
+    count = 0;
+
+    for(j = 0; j < wide; ++j)
+        count += (M.map[j][j] == 'X')?  1 :
+                 (M.map[j][j] == 'O')? -1 : 0;
+    
+    if (count == wide || count == -(wide)) 
+		return count / abs(count); // Return either 1 or -1
+
+    // Cek diagonal ke kanan atas
+    count = 0;
+    
+	for(j = 0; j < wide; j++)
+        count += (M.map[j][wide-1-j] == 'X')?  1 :
+                 (M.map[j][wide-1-j] == 'O')? -1 : 0;
+    
+
+    if (count == wide || count == -(wide)) 
+		return count / abs(count); // Return either 1 or -1
+
+    return 0;
+}
+
+void showWinOrDraw(Player P[], Map M, int width, int wide){
+	int win = checkWin(M, width, wide);
+	int draw = checkDraw(M, width, wide);
+	
+	if(win == 1 || win == -1)
+		printf("\n\t %s\n\n", !P[0].turn ? 
+			"Player 1 Win" : "Player 2 Win");
+	
+	if(draw)
+		printf("\n\t Draw!\n\n");
+	
+	showBoard(M, width, wide);
+	printf("\n\n\tPress any button to back...");
+}
+
+int* getLocation(Map M, int width, int wide, int pick){
+	int i, j, k = 1;
+	
+	int* locArr = malloc(sizeof(int) * 2);
+	
+	for(i = 0 ; i < width ; i++){			
+		for(j = 0 ; j < wide ; j++){
+			if(pick == k) break; 
+			
+			k++;
+		}	
+		if(pick == k && j == wide) 
+			continue;
+		
+		if(pick == k) 
+			break;
 	}
 	
-	showBoard(M);
-	printf("\n\n\tPress any button to back...");
+	locArr[0] = i;
+	locArr[1] = j;
+	
+	return locArr;
 }
