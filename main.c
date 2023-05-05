@@ -9,6 +9,8 @@ int main() {
 	int newWidth = 0, newWide = 0;
 	string buffer;
 	
+	system("color 81");
+	
 	do{
 		showMenu();
 
@@ -22,12 +24,15 @@ int main() {
 				do{
 					system("cls");
 					
-					if(checkWin(M, width, wide) != 0) {
-						showWin(P, M, width, wide);
+					if(checkWin(M, width, wide)  != 0 ||
+					   checkDraw(M, width, wide) != 0) {
+					   	
+						showWinOrDraw(P, M, width, wide);
 						break;
 					}
 					
-					printf("\n\t %s\n\n", P[0].turn ? " Player 1 <X>" : " Player 2 <O>");
+					printf("\n\t%s\n\n", P[0].turn ? 
+						"Player 1 <X>" : "Player 2 <O>");
 					
 					showBoard(M, width, wide);
 
@@ -50,22 +55,20 @@ int main() {
 				
 				if(newWidth < 3 || newWide < 3){
 					printf("\n\t Board size cannot be under 3 x 3 !");
-					break;
 				}
 				else if(newWidth > 9 || newWide > 9){
 					printf("\n\t Board size cannot be over 9 x 9 !");
-					break;
 				}
 				else if(newWidth != newWide){
 					printf("\n\t Board width and wide size must be same !");
-					break;
 				}
 				else{
 					width = newWidth;
 					wide = newWide;
+					
+					printf("\n\t Successfully update board size!");
 				}
-				
-				printf("\n\t Successfully update board size!");
+								
 				break;
 			case 4:
 				printf("\n\t [!] Thanks for playing!");
