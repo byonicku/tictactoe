@@ -11,20 +11,20 @@ int main() {
 	
 	system("color 81");
 	
-	do{
+	do {
 		showMenu();
 
 		printf("\n >>> "); fgets(buffer, MAX_STRING, stdin);
 		menuSelect = atoi(buffer);
 		
-		switch(menuSelect){
+		switch(menuSelect) {
 			case 1 :
 				init(P, &M, width, wide);
 				
-				do{
+				do {
 					system("cls");
 					
-					if(checkWin(M, width, wide)  != 0 ||
+					if (checkWin(M, width, wide)  != 0 ||
 					   checkDraw(M, width, wide) != 0) {
 					   	
 						showWinOrDraw(P, M, width, wide);
@@ -39,7 +39,7 @@ int main() {
 					move(P, &M, width, wide);
 				} while(true);
 				
-				freePointer(&M, width, wide);
+				freeMap(&M, width, wide);
 				break;
 			case 2:
 				showHowTo();
@@ -53,13 +53,14 @@ int main() {
 				printf("\t Input wide 	: "); fgets(buffer, MAX_STRING, stdin);
 				newWide = atoi(buffer);
 				
-				if(newWidth < 3 || newWide < 3)
+				if (newWidth < 3 || newWide < 3) {
 					printf("\n\t Board size cannot be under 3 x 3 !");
-				else if(newWidth > 9 || newWide > 9)
+				} else if (newWidth > 9 || newWide > 9) {
 					printf("\n\t Board size cannot be over 9 x 9 !");
-				else if(newWidth != newWide)
+				} else if (newWidth != newWide) {
 					printf("\n\t Board width and wide size must be same !");
-				else{
+				}
+				else {
 					width = newWidth;
 					wide = newWide;
 					
@@ -74,7 +75,7 @@ int main() {
 				printf("\n\t [!] Menu not found!");
 		} getch();
 		
-	}while(menuSelect != 4);
+	} while(menuSelect != 4);
 	
 	return 0;
 }

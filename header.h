@@ -14,14 +14,14 @@
 
 typedef char string[MAX_STRING];
 
-typedef struct Player{
+typedef struct Player {
 	char put;
 	bool turn;
-}Player;
+} Player;
 
-typedef struct Map{
+typedef struct Map {
 	char** map;
-}Map;
+} Map;
 
 void init(Player P[], Map *M, int width, int wide);
 void showMenu();
@@ -36,6 +36,6 @@ int checkFill(Map M, int i, int j);
 int checkWin(Map M, int width, int wide);
 
 int* getLocation(Map M, int width, int wide, int pick);
-void freePointer(Map *M, int width, int wide);
+void freeMap(Map *M, int width, int wide);
 
 #endif
